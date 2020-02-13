@@ -10,6 +10,7 @@
   "dependencies": {
     "@mdi/font": "^3.6.95",
     "core-js": "^3.6.4",
+    "html2canvas": "^1.0.0-rc.5",
     "roboto-fontface": "*",
     "vue": "^2.6.11",
     "vue-lazy-youtube-video": "^2.0.0-beta.0",

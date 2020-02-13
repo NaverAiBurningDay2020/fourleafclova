@@ -20,11 +20,13 @@
         </li>
       </ul>
     </div>
+
   </div>
 </template>
 
 <script>
 import LazyYoutubeVideo from "vue-lazy-youtube-video";
+import html2canvas from 'html2canvas';
 
 export default {
   name: "YoutubePage",
@@ -36,25 +38,30 @@ export default {
       videos: [
         {
           url: "https://www.youtube.com/embed/Zmifj9aZm7I",
-          previewImageSize: "maxresdefault"
+          previewImageSize: "sddefault",
+          aspectRatio: "2:1"
         },
         {
           url: "https://www.youtube.com/embed/BvBd51vqSGU",
-          previewImageSize: "hqdefault"
+          previewImageSize: "hqdefault",
+          aspectRatio: "1:1"
         },
         {
           url: "https://www.youtube.com/embed/dz_8EkP761E",
-          previewImageSize: "sddefault",
+          previewImageSize: "mqdefault",
           aspectRatio: "1:1"
         },
         {
           url: "https://www.youtube.com/embed/K99_dxqH6MY",
-          previewImageSize: "mqdefault"
+          previewImageSize: "mqdefault",
+          aspectRatio: "1:1"
         }
       ]
     };
   }
 };
+
+
 </script>
 
 <style>
