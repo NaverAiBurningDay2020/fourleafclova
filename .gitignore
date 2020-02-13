@@ -132,3 +132,5 @@ src/_drafts
 package-lock.json
 
 venv/
+.env
+.vscode/
