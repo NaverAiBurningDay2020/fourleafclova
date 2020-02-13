@@ -1,10 +1,15 @@
 <template>
-    <h1>Hello</h1>
+    <ClickPosition />
 </template>
 
 <script>
-export default {
+import ClickPosition from "../components/ClickPosition"
 
+export default {
+    name: "WebCamPage",
+    components: {
+        ClickPosition
+    }
 }
 </script>
 
