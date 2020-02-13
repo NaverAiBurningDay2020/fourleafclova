@@ -1,5 +1,6 @@
 <template>
-  <div id="app">
+  <div id="app"> 
+    <ClickPosition/>
     <h1 class="h1">vue-lazy-youtube-video</h1>
     <p>
       Initially this component loads only a thumbnail of the video, but after being clicked it inserts
@@ -25,11 +26,13 @@
 
 <script>
 import LazyYoutubeVideo from "vue-lazy-youtube-video";
+import ClickPosition from "../src/components/ClickPosition"
 
 export default {
   name: "App",
   components: {
-    LazyYoutubeVideo
+    LazyYoutubeVideo, 
+    ClickPosition,
   },
   data() {
     return {
