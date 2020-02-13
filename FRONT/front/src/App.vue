@@ -1,19 +1,24 @@
 <template>
   <v-app>
+    <ClickPosition />
     <v-content>
-      <router-view/>
+      <router-view />
     </v-content>
   </v-app>
 </template>
 <script>
-import router from './router'
+import router from "./router";
+import ClickPosition from "../src/components/ClickPosition";
 export default {
-  name: 'App',
+  name: "App",
   router,
+  components: {
+    ClickPosition
+  },
   data() {
-      return {
-          //
-      }
+    return {
+      //
+    };
   }
-}
+};
 </script>
