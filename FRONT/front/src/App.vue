@@ -6,6 +6,7 @@
     </v-content>
   </v-app>
 </template>
+
 <script>
 import router from "./router";
 import ClickPosition from "../src/components/ClickPosition";
