@@ -2,7 +2,7 @@ import React,{Component} from "react";
 import styled from "styled-components";
 
 import StartCanvas from "../../components/StartCanvas"
-import Video from "../../components/Video";
+// import Video from "../../components/Video";
 
 // import PostList from "../../components/PostList";
 // import NavBar from "../../components/NavBar";
@@ -12,12 +12,11 @@ import Video from "../../components/Video";
 // import CircularProgress from '@material-ui/core/CircularProgress';
 
 class MainPage extends Component {
-
   render(){
     return(
       <MainPageLayout>
           <StartCanvas></StartCanvas>
-          <Video></Video>
+          {/* <Video></Video> */}
 
       </MainPageLayout>
     )  

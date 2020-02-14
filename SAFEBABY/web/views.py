@@ -18,7 +18,6 @@ def check(request):
         "kakaojskey": key
     }
     data = json.dumps(ctx)
-    print(data)
     return render(request,'web/check.html',{"data":data})
 
 
@@ -45,8 +44,7 @@ def test(request):
 
 @api_view(['POST'])
 def getValue(request):
-    print("aa")
-    print(json.loads(request.body))
+    # print(json.loads(request.body))
     # 포인트 4개가 전달되었을 때 처리하는 로직
     # 모델 라이브러리 호출
     if True:
@@ -56,6 +54,7 @@ def getValue(request):
     
 @api_view(['GET'])
 def getFirstImage(request):
+    framecut.framecut()
     # 우리가 가지고 있는 image 중에서 첫 이미지만 전달하면 됨
     # 주소만 전달.
     import base64
@@ -64,8 +63,6 @@ def getFirstImage(request):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     path = os.path.join(BASE_DIR, "images", "test2.jpg")
     
-    print(path)
-    print("TTTTTT")
     with open(path, "rb") as image_file:
         ss = base64.b64encode(image_file.read())
         return HttpResponse(ss, content_type="image/jpg")

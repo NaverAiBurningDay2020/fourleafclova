@@ -1,122 +1,146 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 
-import axios from 'axios'
+import axios from "axios";
 
 class StartCanvas extends Component {
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       positions: [],
       videourl: ""
     };
-    
-    this.handleImageFiles = this.handleImageFiles.bind(this)
-    this.reset = this.reset.bind(this)
-    this.mouseClickOnCanvas = this.mouseClickOnCanvas.bind(this)
-    this.mousePos = this.mousePos.bind(this)
-    this.buttonClick = this.buttonClick.bind(this)
-    this.checkFirstImage = this.checkFirstImage.bind(this)
-    this.onChangeInput = this.onChangeInput.bind(this)
+
+    // this.handleImageFiles = this.handleImageFiles.bind(this)
+    this.reset = this.reset.bind(this);
+    this.mouseClickOnCanvas = this.mouseClickOnCanvas.bind(this);
+    this.mousePos = this.mousePos.bind(this);
+    this.sendPoints = this.sendPoints.bind(this);
+    // this.checkFirstImage = this.checkFirstImage.bind(this)
+    // this.onChangeInput = this.onChangeInput.bind(this)
   }
 
   componentDidMount() {
     axios({
-      method: 'get',
-      url: 'http://localhost:8000/web/getFirstImage/',
+      method: "get",
+      url: "http://localhost:8000/web/getFirstImage/"
     }).then(res => {
-      console.log(res)
       var cvs = document.getElementById("canvas");
       var ctx = cvs.getContext("2d");
 
       var image = new Image();
-      image.src = "data:image/jpg;base64," + res.data
+      image.src = "data:image/jpg;base64," + res.data;
       image.onload = function() {
         cvs.width = image.width;
         cvs.height = image.height;
         ctx.drawImage(this, 0, 0, cvs.width, cvs.height);
-      }
-      
-      console.log(image.src)
-    })
+      };
+    });
   }
 
-  onChangeInput = e => {
-    this.setState({videourl: e.target.value})
-  }
+  // onChangeInput = e => {
+  //   this.setState({videourl: e.target.value})
+  // }
 
-  checkFirstImage = e => {
-    console.log("첫화면 찍으세요")
+  // checkFirstImage = e => {
+  //   axios({
+  //     method: 'post',
+  //     url: 'http://localhost:8000/web/getValue/',
+  //     data: {
+  //       url: this.state.videourl, //'https://www.youtube.com/watch?v=jzNdJ5Iq3ps',
+  //       data: this.state.positions
+  //     }
+  //   }).then(res => {
+  //     console.log(res)
+  //   })
+  // }
+
+  sendPoints = e => {
     axios({
-      method: 'post',
-      url: 'http://localhost:8000/web/getValue/',
+      method: "post",
+      url: "http://localhost:8000/web/getValue/",
       data: {
-        url: this.state.videourl, //'https://www.youtube.com/watch?v=jzNdJ5Iq3ps',
-        data: this.state.positions
+        points: this.state.positions
       }
     }).then(res => {
-      console.log(res)
-    })
-  }
-
-  buttonClick = e => {
-    console.log(this.state.positions)
-  }
-  
-  handleImageFiles = e => {
-    var url = window.URL.createObjectURL(e.target.files[0]);
-    var cvs = document.getElementById("canvas");
-    var ctx = cvs.getContext("2d");
-    var img = new Image();
-    img.onload = function() {
-      cvs.width = img.width;
-      cvs.height = img.height;
-      console.log(cvs.width);
-      console.log(cvs.height);
-      ctx.drawImage(img, 0, 0);
-    };
-    
-    img.src = url;
+      console.log(res.status);
+    });
   };
 
+  // handleImageFiles = e => {
+  //   var url = window.URL.createObjectURL(e.target.files[0]);
+  //   var cvs = document.getElementById("canvas");
+  //   var ctx = cvs.getContext("2d");
+  //   var img = new Image();
+  //   img.onload = function() {
+  //     cvs.width = img.width;
+  //     cvs.height = img.height;
+  //     console.log(cvs.width);
+  //     console.log(cvs.height);
+  //     ctx.drawImage(img, 0, 0);
+  //   };
+
+  //   img.src = url;
+  // };
+
   reset = () => {
-    console.log("reset");
     this.setState({ positions: [] });
   };
 
   mouseClickOnCanvas = e => {
     var cvs = document.getElementById("canvas");
     var ctx = cvs.getContext("2d");
-    var res = document.getElementById("results");
+    //var res = document.getElementById("results");
     var rect = cvs.getBoundingClientRect();
     var x = parseInt(e.clientX - rect.left);
     var y = parseInt(e.clientY - rect.top);
     var p = ctx.getImageData(x, y, 1, 1).data;
 
     const clickdata = this.state.positions;
-    //왜 이벤트가 하나 증발하지?
-    console.log(clickdata)
-    console.log('click')
     if (clickdata.length < 4) {
-      const newdata = clickdata.concat({x:x, y:y})
-      console.log(newdata)
+      const newdata = clickdata.concat({ x: x, y: y });
       this.setState({
-        positions: newdata})
+        positions: newdata
+      });
+
+      if (clickdata.length > 0) {
+        ctx.beginPath();
+        ctx.moveTo(
+          clickdata[clickdata.length - 1].x,
+          clickdata[clickdata.length - 1].y
+        );
+        ctx.lineTo(x, y);
+        ctx.lineWidth = 10;
+        ctx.strokeStyle= "#00FF00"
+        ctx.stroke();
+        // 4번째 입력시에
+        if (clickdata.length === 3) {
+          ctx.beginPath();
+          ctx.moveTo(
+          clickdata[0].x,
+          clickdata[0].y
+        );
+          ctx.lineTo(x, y);
+          ctx.lineWidth = 10;
+          ctx.strokeStyle= "#00FF00"
+          ctx.stroke();
+        }
+      }
     } else {
-      console.log("더 이상 입력불가");
+      alert("입력 불가합니다. 초기화해주세요.");
     }
   };
 
   mousePos = e => {
     var cvs = document.getElementById("canvas");
     var ctx = cvs.getContext("2d");
-    var res = document.getElementById("results");
+    //var res = document.getElementById("results");
     var rect = cvs.getBoundingClientRect();
     var x = parseInt(e.clientX - rect.left);
     var y = parseInt(e.clientY - rect.top);
     var p = ctx.getImageData(x, y, 1, 1).data;
-    res.innerHTML = 
-    '<p> X:' + x + 'Y:' + y + '</p>'
+    // res.innerHTML =
+    // '<p> X:' + x + 'Y:' + y + '</p>'
     return { x, y };
   };
   render() {
@@ -124,26 +148,22 @@ class StartCanvas extends Component {
       <StartCanvasLayout>
         <div>
           <h1>첫화면</h1>
-          <input onChange={this.onChangeInput}  placeholder="유튜브 영상 주소를 입력하세요"></input>
-          <button onClick={this.checkFirstImage}>첫 화면 체크</button>
-          <button onClick={this.buttonClick}>마지막체크</button>
-          <button onClick={this.reset}>초기화</button>
-          <input type="file" onChange={this.handleImageFiles}></input>
-          <p>이미지에서 네 점을 잡아주세요</p>
-          
-          <div id="results">
-            Move mouse over image to show mouse location and pixel value and
-            alpha
-          </div>
+          {/* <input onChange={this.onChangeInput}  placeholder="유튜브 영상 주소를 입력하세요"></input> */}
+          {/* <button onClick={this.checkFirstImage}>첫 화면 체크</button> */}
+          <button onClick={this.reset}>선택초기화</button>
+          <button onClick={this.sendPoints}>가이드포인트 전달</button>
+          {/* <input type="file" onChange={this.handleImageFiles}></input> */}
+          <p>이미지에서 시계/반시계 방향으로 네 점을 잡아주세요</p>
+          {/* <div id="results">
+            마우스 오버된 포지션 좌표 전달
+          </div> */}
 
           <Canvas
             id="canvas"
             style={{ margin: "12px" }}
             onClick={this.mouseClickOnCanvas}
             onMouseMove={this.mousePos}
-            src="https://img.youtube.com/vi/2K6qgycICUs/0.jpg"
           ></Canvas>
-          
         </div>
       </StartCanvasLayout>
     );
@@ -179,8 +199,8 @@ const PostContentImage = styled.img`
 
 const Canvas = styled.canvas`
   border-style: solid;
-  border-width : 2px;
-  border-color : black;
-`
+  border-width: 2px;
+  border-color: black;
+`;
 
 export default StartCanvas;
