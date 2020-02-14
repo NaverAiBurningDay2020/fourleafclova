@@ -8,7 +8,8 @@ class StartCanvas extends Component {
     super(props);
     this.state = {
       positions: [],
-      videourl: ""
+      videourl: "",
+      imageSrc: "",
     };
 
     // this.handleImageFiles = this.handleImageFiles.bind(this)
@@ -30,6 +31,7 @@ class StartCanvas extends Component {
 
       var image = new Image();
       image.src = "data:image/jpg;base64," + res.data;
+      this.setState({imageSrc: image.src})
       image.onload = function() {
         cvs.width = image.width;
         cvs.height = image.height;
@@ -56,6 +58,11 @@ class StartCanvas extends Component {
   // }
 
   sendPoints = e => {
+    if (this.state.positions.length < 4){
+      alert("4점을 모두 찍어주세요")
+      return;
+    }
+
     axios({
       method: "post",
       url: "http://localhost:8000/web/getValue/",
@@ -63,7 +70,7 @@ class StartCanvas extends Component {
         points: this.state.positions
       }
     }).then(res => {
-      console.log(res.status);
+      console.log(res)
     });
   };
 
@@ -85,6 +92,17 @@ class StartCanvas extends Component {
 
   reset = () => {
     this.setState({ positions: [] });
+    var cvs = document.getElementById("canvas");
+    var ctx = cvs.getContext("2d");
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+    var image = new Image();
+    image.src = this.state.imageSrc;
+    image.onload = function() {
+      cvs.width = image.width;
+      cvs.height = image.height;
+      ctx.drawImage(this, 0, 0, cvs.width, cvs.height);
+    };
   };
 
   mouseClickOnCanvas = e => {
@@ -147,7 +165,7 @@ class StartCanvas extends Component {
     return (
       <StartCanvasLayout>
         <div>
-          <h1>첫화면</h1>
+          <h1><b>가이드라인 설정</b></h1>
           {/* <input onChange={this.onChangeInput}  placeholder="유튜브 영상 주소를 입력하세요"></input> */}
           {/* <button onClick={this.checkFirstImage}>첫 화면 체크</button> */}
           <button onClick={this.reset}>선택초기화</button>

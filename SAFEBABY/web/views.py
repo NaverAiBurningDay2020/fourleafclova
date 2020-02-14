@@ -7,6 +7,9 @@ import json
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from . import pose
+
+nImage = 0
 
 # Create your views here.
 def index(request):
@@ -27,7 +30,7 @@ def save(request):
     print(request)
 
     # 2. '프레임 짜르기' 실행하기
-    framecut.framecut()
+    nImage = framecut.framecut()
 
     # 3. 각 프레임(사진, 이미지)을 처리하는 반복문
     # 3-1. 아이의 스켈레톤과 함께 처리되어 나온 결과(좌표, 사진) 받기
@@ -47,6 +50,19 @@ def getValue(request):
     # print(json.loads(request.body))
     # 포인트 4개가 전달되었을 때 처리하는 로직
     # 모델 라이브러리 호출
+    data = json.loads(request.body)
+    print(data)
+    for i in range(nImage):
+        pose.Check() # 스켈레톤 좌표 돌려줌 
+        makebox() # 중심좌표 돌려줌.
+         # 두개 합쳐서 산술평균 내서 그냥 사람의 (포즈)사이즈와, 저 둘 좌표의 평균 내면 
+         # 우리가 판단한 사람 중심이 나오고 
+
+         # 가이드라인의 중심점 4개와 거리를 계산해서.  거리가 사람의 사이즈의 30% 이런식이면 카톡으로 트리거.
+        # output 폴더에 json과 사진이 있다.
+        # 위험상황이면 전송하고 , json 만 분석.
+        # axios.post()
+
     if True:
         return  Response(status=200) 
     else:

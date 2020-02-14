@@ -19,4 +19,4 @@ def framecut():
                 videocap.release()
                 break
         
-        return "framecut complete!"
+        return count
