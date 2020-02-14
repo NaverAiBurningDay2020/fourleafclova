@@ -9,8 +9,11 @@
   },
   "dependencies": {
     "@mdi/font": "^3.6.95",
+    "chromedriver": "^80.0.1",
     "core-js": "^3.6.4",
+    "html2canvas": "^1.0.0-rc.5",
     "roboto-fontface": "*",
+    "selenium-webdriver": "^4.0.0-alpha.5",
     "vue": "^2.6.11",
     "vue-lazy-youtube-video": "^2.0.0-beta.0",
     "vue-router": "^3.1.5",

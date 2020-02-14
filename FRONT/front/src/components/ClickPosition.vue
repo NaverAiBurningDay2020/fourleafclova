@@ -35,6 +35,8 @@ export default {
       img.onload = function() {
         cvs.width = img.width;
         cvs.height = img.height;
+        console.log(cvs.width)
+        console.log(cvs.height)
         ctx.drawImage(img, 0, 0);
       };
       img.src = url;

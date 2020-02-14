@@ -1,7 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+import axios from 'axios'
 
 const Video = () => {
+    const sendImageToServer = (image) => {
+        //axios.post('http://localhost:8000/getImage', image)
+    }
   return (
     <VideoLayout>
       <h1>비디오화면</h1>
@@ -14,7 +18,7 @@ const Video = () => {
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
       ></iframe>
-      <button onclick="sendImageToServer()">서버로 이미지 보내기</button>
+      <button onclick={sendImageToServer}>서버로 이미지 보내기</button>
     </VideoLayout>
   );
 };

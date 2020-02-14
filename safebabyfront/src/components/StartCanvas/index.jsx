@@ -1,30 +1,63 @@
-import React, { useState } from "react";
+import React, { Component } from "react";
 import styled from "styled-components";
 
-const StartCanvas = () => {
-  const [positions, setPositions] = useState([]);
+import axios from 'axios'
 
-  const handleImageFiles = (e) => {
-        var url = window.URL.createObjectURL(e.target.files[0]);
-        var cvs = document.getElementById("canvas");
-        var ctx = cvs.getContext("2d");
-        var img = new Image();
-        img.onload = function() {
-          cvs.width = img.width;
-          cvs.height = img.height;
-          console.log(cvs.width)
-          console.log(cvs.height)
-          ctx.drawImage(img, 0, 0);
-        };
-        img.src = url;
+class StartCanvas extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      positions: []
+    };
+    
+    this.handleImageFiles = this.handleImageFiles.bind(this)
+    this.reset = this.reset.bind(this)
+    this.mouseClickOnCanvas = this.mouseClickOnCanvas.bind(this)
+    this.mousePos = this.mousePos.bind(this)
+    this.buttonClick = this.buttonClick.bind(this)
+    this.checkFirstImage = this.checkFirstImage.bind(this)
+  }
+
+  checkFirstImage = e => {
+    console.log("첫화면 찍으세요")
+    axios({
+      method: 'post',
+      url: 'http://localhost:8000/web/getValue/',
+      data: {
+        url: 'https://www.youtube.com/watch?v=jzNdJ5Iq3ps',
+        data: this.state.positions
       }
+    }).then(res => {
+      console.log(res)
+    })
+  }
 
-  const reset = () => {
-    console.log('reset')
-    setPositions([]);
+  buttonClick = e => {
+    console.log(this.state.positions)
+  }
+  
+  handleImageFiles = e => {
+    var url = window.URL.createObjectURL(e.target.files[0]);
+    var cvs = document.getElementById("canvas");
+    var ctx = cvs.getContext("2d");
+    var img = new Image();
+    img.onload = function() {
+      cvs.width = img.width;
+      cvs.height = img.height;
+      console.log(cvs.width);
+      console.log(cvs.height);
+      ctx.drawImage(img, 0, 0);
+    };
+    
+    img.src = url;
   };
 
-  const mouseClickOnCanvas = e => {
+  reset = () => {
+    console.log("reset");
+    this.setState({ positions: [] });
+  };
+
+  mouseClickOnCanvas = e => {
     var cvs = document.getElementById("canvas");
     var ctx = cvs.getContext("2d");
     var res = document.getElementById("results");
@@ -32,16 +65,22 @@ const StartCanvas = () => {
     var x = parseInt(e.clientX - rect.left);
     var y = parseInt(e.clientY - rect.top);
     var p = ctx.getImageData(x, y, 1, 1).data;
-    
-    if (positions.length < 4) {
-      setPositions(positions.concat({x:x,y:y}))
+
+    const clickdata = this.state.positions;
+    //왜 이벤트가 하나 증발하지?
+    console.log(clickdata)
+    console.log('click')
+    if (clickdata.length < 4) {
+      const newdata = clickdata.concat({x:x, y:y})
+      console.log(newdata)
+      this.setState({
+        positions: newdata})
     } else {
       console.log("더 이상 입력불가");
     }
-    console.log(positions);
   };
 
-  const mousePos = e => {
+  mousePos = e => {
     var cvs = document.getElementById("canvas");
     var ctx = cvs.getContext("2d");
     var res = document.getElementById("results");
@@ -49,46 +88,40 @@ const StartCanvas = () => {
     var x = parseInt(e.clientX - rect.left);
     var y = parseInt(e.clientY - rect.top);
     var p = ctx.getImageData(x, y, 1, 1).data;
-    res.innerHTML =
-      '<table style="width:100%;table-layout:fixed"><td>X: ' +
-      x +
-      "</td><td>Y: " +
-      y +
-      "</td><td>Red: " +
-      p[0] +
-      "</td><td>Green: " +
-      p[1] +
-      "</td><td>Blue: " +
-      p[2] +
-      "</td><td>Alpha: " +
-      p[3] +
-      "</td></table>";
+    res.innerHTML = 
+    '<p> X:' + x + 'Y:' + y + '</p>'
     return { x, y };
   };
+  render() {
+    return (
+      <StartCanvasLayout>
+        <div>
+          <h1>첫화면</h1>
+          <input placeholder="유튜브 영상 주소를 입력하세요"></input>
+          <button onClick={this.checkFirstImage}>첫 화면 체크</button>
+          <button onClick={this.buttonClick}>마지막체크</button>
+          <button onClick={this.reset}>초기화</button>
+          <input type="file" onChange={this.handleImageFiles}></input>
+          <p>이미지에서 네 점을 잡아주세요</p>
+          
+          <div id="results">
+            Move mouse over image to show mouse location and pixel value and
+            alpha
+          </div>
 
-  return (
-    <StartCanvasLayout>
-      <div>
-        <h1>첫화면- 이벤트처리</h1>
-        <h1>첫화면</h1>
-        <input type="file" onChange={handleImageFiles}></input>
-        <p>이미지에서 bound position을 잡아주세요</p>
-        <div id="results" >Move mouse over image to show mouse location and pixel value and alpha</div>
-
-        <canvas
-          id="canvas"
-          style={{ margin: "12px" }}
-          onMouseMove={mousePos}
-          onClick={mouseClickOnCanvas}
-        ></canvas>
-        <button onClick={reset}>초기화</button>
-        <div class="footer" id="results">
-          마우스를 올려서 네 점을 선택해주세요.
+          <Canvas
+            id="canvas"
+            style={{ margin: "12px" }}
+            onClick={this.mouseClickOnCanvas}
+            onMouseMove={this.mousePos}
+            src="https://img.youtube.com/vi/2K6qgycICUs/0.jpg"
+          ></Canvas>
+          
         </div>
-      </div>
-    </StartCanvasLayout>
-  );
-};
+      </StartCanvasLayout>
+    );
+  }
+}
 
 const StartCanvasLayout = styled.div`
   margin-top: 3vh;
@@ -116,5 +149,11 @@ const PostContentImage = styled.img`
     box-shadow: 0 0 2px 1px rgba(0, 300, 186, 0.5);
   }
 `;
+
+const Canvas = styled.canvas`
+  border-style: solid;
+  border-width : 2px;
+  border-color : black;
+`
 
 export default StartCanvas;

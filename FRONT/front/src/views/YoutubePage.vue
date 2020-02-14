@@ -20,6 +20,8 @@
         </li>
       </ul>
     </div>
+    <canvas></canvas>
+	  <button id="snap" v-on:click="snap">Take screenshot</button>
   </div>
 </template>
 
@@ -37,25 +39,57 @@ export default {
         {
           url: "https://www.youtube.com/embed/Zmifj9aZm7I",
           previewImageSize: "maxresdefault"
-        },
-        {
-          url: "https://www.youtube.com/embed/BvBd51vqSGU",
-          previewImageSize: "hqdefault"
-        },
-        {
-          url: "https://www.youtube.com/embed/dz_8EkP761E",
-          previewImageSize: "sddefault",
-          aspectRatio: "1:1"
-        },
-        {
-          url: "https://www.youtube.com/embed/K99_dxqH6MY",
-          previewImageSize: "mqdefault"
         }
+        // {
+        //   url: "https://www.youtube.com/embed/BvBd51vqSGU",
+        //   previewImageSize: "hqdefault"
+        // },
       ]
     };
+  },
+  methods: {
+    // Takes a snapshot of the video
+		snap() {
+      // Define the size of the rectangle that will be filled (basically the entire element)
+      var video = document.querySelector('iframe');
+		  var canvas = document.querySelector('canvas');
+      var context = canvas.getContext('2d');
+      
+			context.fillRect(0, 0, w, h);
+			// Grab the image from the video
+			context.drawImage(video, 0, 0, w, h);
+		}
   }
 };
+
+// Get handles on the video and canvas elements
+		var video = document.querySelector('iframe');
+		var canvas = document.querySelector('canvas');
+    // Get a handle on the 2d context of the canvas element
+    if(canvas){
+      var context = canvas.getContext('2d');
+    }
+		// Define some vars required later
+		var w, h, ratio;
+		if(video){
+		// Add a listener to wait for the 'loadedmetadata' state so the video's dimensions can be read
+		video.addEventListener('loadedmetadata', function() {
+			// Calculate the ratio of the video's width to height
+			ratio = video.videoWidth / video.videoHeight;
+			// Define the required width as 100 pixels smaller than the actual video's width
+			w = video.videoWidth - 100;
+			// Calculate the height based on the video's width and the ratio
+			h = parseInt(w / ratio, 10);
+			// Set the canvas width and height to the values just calculated
+			canvas.width = w;
+			canvas.height = h;			
+		}, false);
+    }
+		
+		 
 </script>
+
+
 
 <style>
 #app {
