@@ -88,17 +88,17 @@ def getValue(request):
 
         # 가이드라인의 중심점 4개와 거리를 계산해서.  거리가 사람의 사이즈의 30% 이런식이면 카톡으로 트리거.
         for j in len(bedXY):
-            if (abs(bedXY[j][0]-peopleXY[0])**2+abs(bedXY[j][1]-peopleXY[1])**2)**0.5 < 100:
-                return
-        # output 폴더에 json과 사진이 있다.
-        # 위험상황이면 전송하고 , json 만 분석.
-        # axios.post()
+            if (abs(bedXY[j][0]-peopleXY[0])**2+abs(bedXY[j][1]-peopleXY[1])**2)**0.5 < (((maxx-minx)**2+(maxy-miny)**2)**0.5)*3/10:
+                # 위험 상황
+                return Response(status=500)
+        
+    # output 폴더에 json과 사진이 있다.
+    # 위험상황이면 전송하고 , json 만 분석.
+    # axios.post()
 
-    if True:
-        return  Response(status=200) 
-    else:
-        return Response(status=500)
-    
+    # 정상 상황
+    return Response(status=200)
+
 @api_view(['GET'])
 def getFirstImage(request):
     framecut.framecut()
