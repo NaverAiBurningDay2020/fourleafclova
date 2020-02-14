@@ -7,7 +7,8 @@ import json
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from . import pose
+from ..ai-model import openpose1
+from .functions import makebox
 
 nImage = 0
 
@@ -50,15 +51,45 @@ def getValue(request):
     # print(json.loads(request.body))
     # 포인트 4개가 전달되었을 때 처리하는 로직
     # 모델 라이브러리 호출
-    data = json.loads(request.body)
-    print(data)
-    for i in range(nImage):
-        pose.Check() # 스켈레톤 좌표 돌려줌 
-        makebox() # 중심좌표 돌려줌.
-         # 두개 합쳐서 산술평균 내서 그냥 사람의 (포즈)사이즈와, 저 둘 좌표의 평균 내면 
-         # 우리가 판단한 사람 중심이 나오고 
 
-         # 가이드라인의 중심점 4개와 거리를 계산해서.  거리가 사람의 사이즈의 30% 이런식이면 카톡으로 트리거.
+    data = json.loads(request.body)
+    # print(data)
+
+    bedXY = [((data.points[0].x + data.points[1].x)/2, (data.points[0].y + data.points[1].y)/2), ((data.points[1].x + data.points[2].x)/2, (data.points[1].y + data.points[2].y)/2),
+    ((data.points[2].x + data.points[3].x)/2, (data.points[2].y + data.points[3].y)/2), ((data.points[3].x + data.points[1].x)/2, (data.points[3].y + data.points[1].y)/2)]
+
+    for i in range(nImage):
+        data = openpose1.openpose1() # 스켈레톤 좌표 돌려줌
+        sumx = 0
+        sumy = 0
+        cnt = 0
+        minx = 10000
+        miny = 10000
+        maxx = -1
+        maxy = -1
+        for j in len(data):
+            if(data[j][j+1].x != ''):
+                cnt += 1
+                if (minx > data[j][j+1].x):
+                    minx = data[j][j+1].x
+                if (miny > data[j][j+1].y):
+                    miny = data[j][j+1].y
+                if (maxy > data[j][j+1].y):
+                    maxy = data[j][j+1].y
+                if (maxx > data[j][j+1].x):
+                    maxx = data[j][j+1].x
+                sumx += data[j][j+1].x
+                sumy += data[j][j+1].y
+
+        naverXY = makebox.makebox() # 중심좌표 돌려줌.
+        # 두개 합쳐서 산술평균 내서 그냥 사람의 (포즈)사이즈와, 저 둘 좌표의 평균 내면 
+        # 우리가 판단한 사람 중심이 나오고 
+        peopleXY = ((naverXY[0] + (sumx/cnt)) / 2, (naverXY[1] + (sumy/cnt)) / 2)
+
+        # 가이드라인의 중심점 4개와 거리를 계산해서.  거리가 사람의 사이즈의 30% 이런식이면 카톡으로 트리거.
+        for j in len(bedXY):
+            if (abs(bedXY[j][0]-peopleXY[0])**2+abs(bedXY[j][1]-peopleXY[1])**2)**0.5 < 100:
+                return
         # output 폴더에 json과 사진이 있다.
         # 위험상황이면 전송하고 , json 만 분석.
         # axios.post()
