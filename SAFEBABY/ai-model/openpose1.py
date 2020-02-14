@@ -5,7 +5,8 @@ def openpose1(inputImageName='baby.jpg'): # 파라미터가 오지 않으면 임
     import json
     from pprint import pprint
     # 기본 경로 설정
-    base_dir = os.getcwd().replace('\\','/')+'/SAFEBABY'
+    print(os.getcwd())
+    base_dir = 'C:/Users/USER/Desktop/NaverAIBurningDay/fourleafclova/SAFEBABY/'.replace('\\','/')#'os.getcwd().replace('\\','/')
     print('기본경로: {}'.format(base_dir))
 
     # MPII에서 각 파트 번호, 선으로 연결될 POSE_PAIRS
@@ -127,7 +128,7 @@ def openpose1(inputImageName='baby.jpg'): # 파라미터가 오지 않으면 임
     #cv2.waitKey(2000)
     cv2.destroyAllWindows()
     
-
+    return pointsDict
 
 print('첫번째 :')
 openpose1()
