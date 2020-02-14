@@ -26,6 +26,7 @@ def getValue(request):
     print("aa")
     print(json.loads(request.body))
     # 포인트 4개가 전달되었을 때 처리하는 로직
+    # 모델 라이브러리 호출
     if True:
         return  Response(status=200) 
     else:
@@ -35,7 +36,20 @@ def getValue(request):
 def getFirstImage(request):
     # 우리가 가지고 있는 image 중에서 첫 이미지만 전달하면 됨
     # 주소만 전달.
-    return Response(status=200) 
+    import base64
+    import os
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    path = os.path.join(BASE_DIR, "images", "test2.jpg")
+    
+    print(path)
+    print("TTTTTT")
+    with open(path, "rb") as image_file:
+        ss = base64.b64encode(image_file.read())
+        return HttpResponse(ss, content_type="image/jpg")
+        #encoded_string = base64.b64encode(image_file.read())
+    
+    return Response(data=encoded_string, status=200 ) 
 
 
 

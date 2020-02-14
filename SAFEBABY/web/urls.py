@@ -8,6 +8,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('check/',views.check, name='check'),
     # api 호출
-    path('getValue/', views.getValue, name='getValue')
+    path('getValue/', views.getValue, name='getValue'),
+    path('getFirstImage/', views.getFirstImage, name='getFirstImage')
+
 
 ]

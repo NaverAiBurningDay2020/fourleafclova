@@ -7,7 +7,8 @@ class StartCanvas extends Component {
   constructor(props){
     super(props)
     this.state = {
-      positions: []
+      positions: [],
+      videourl: ""
     };
     
     this.handleImageFiles = this.handleImageFiles.bind(this)
@@ -16,6 +17,32 @@ class StartCanvas extends Component {
     this.mousePos = this.mousePos.bind(this)
     this.buttonClick = this.buttonClick.bind(this)
     this.checkFirstImage = this.checkFirstImage.bind(this)
+    this.onChangeInput = this.onChangeInput.bind(this)
+  }
+
+  componentDidMount() {
+    axios({
+      method: 'get',
+      url: 'http://localhost:8000/web/getFirstImage/',
+    }).then(res => {
+      console.log(res)
+      var cvs = document.getElementById("canvas");
+      var ctx = cvs.getContext("2d");
+
+      var image = new Image();
+      image.src = "data:image/jpg;base64," + res.data
+      image.onload = function() {
+        cvs.width = image.width;
+        cvs.height = image.height;
+        ctx.drawImage(this, 0, 0, cvs.width, cvs.height);
+      }
+      
+      console.log(image.src)
+    })
+  }
+
+  onChangeInput = e => {
+    this.setState({videourl: e.target.value})
   }
 
   checkFirstImage = e => {
@@ -24,7 +51,7 @@ class StartCanvas extends Component {
       method: 'post',
       url: 'http://localhost:8000/web/getValue/',
       data: {
-        url: 'https://www.youtube.com/watch?v=jzNdJ5Iq3ps',
+        url: this.state.videourl, //'https://www.youtube.com/watch?v=jzNdJ5Iq3ps',
         data: this.state.positions
       }
     }).then(res => {
@@ -97,7 +124,7 @@ class StartCanvas extends Component {
       <StartCanvasLayout>
         <div>
           <h1>첫화면</h1>
-          <input placeholder="유튜브 영상 주소를 입력하세요"></input>
+          <input onChange={this.onChangeInput}  placeholder="유튜브 영상 주소를 입력하세요"></input>
           <button onClick={this.checkFirstImage}>첫 화면 체크</button>
           <button onClick={this.buttonClick}>마지막체크</button>
           <button onClick={this.reset}>초기화</button>
