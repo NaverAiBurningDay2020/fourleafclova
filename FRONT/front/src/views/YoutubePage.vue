@@ -20,13 +20,12 @@
         </li>
       </ul>
     </div>
-    <canvas></canvas>
-	  <button id="snap" v-on:click="snap">Take screenshot</button>
   </div>
 </template>
 
 <script>
 import LazyYoutubeVideo from "vue-lazy-youtube-video";
+import html2canvas from 'html2canvas';
 
 export default {
   name: "YoutubePage",
@@ -38,7 +37,23 @@ export default {
       videos: [
         {
           url: "https://www.youtube.com/embed/Zmifj9aZm7I",
-          previewImageSize: "maxresdefault"
+          previewImageSize: "sddefault",
+          aspectRatio: "2:1"
+        },
+        {
+          url: "https://www.youtube.com/embed/BvBd51vqSGU",
+          previewImageSize: "hqdefault",
+          aspectRatio: "1:1"
+        },
+        {
+          url: "https://www.youtube.com/embed/dz_8EkP761E",
+          previewImageSize: "mqdefault",
+          aspectRatio: "1:1"
+        },
+        {
+          url: "https://www.youtube.com/embed/K99_dxqH6MY",
+          previewImageSize: "mqdefault",
+          aspectRatio: "1:1"
         }
         // {
         //   url: "https://www.youtube.com/embed/BvBd51vqSGU",
@@ -62,31 +77,6 @@ export default {
   }
 };
 
-// Get handles on the video and canvas elements
-		var video = document.querySelector('iframe');
-		var canvas = document.querySelector('canvas');
-    // Get a handle on the 2d context of the canvas element
-    if(canvas){
-      var context = canvas.getContext('2d');
-    }
-		// Define some vars required later
-		var w, h, ratio;
-		if(video){
-		// Add a listener to wait for the 'loadedmetadata' state so the video's dimensions can be read
-		video.addEventListener('loadedmetadata', function() {
-			// Calculate the ratio of the video's width to height
-			ratio = video.videoWidth / video.videoHeight;
-			// Define the required width as 100 pixels smaller than the actual video's width
-			w = video.videoWidth - 100;
-			// Calculate the height based on the video's width and the ratio
-			h = parseInt(w / ratio, 10);
-			// Set the canvas width and height to the values just calculated
-			canvas.width = w;
-			canvas.height = h;			
-		}, false);
-    }
-		
-		 
 </script>
 
 
